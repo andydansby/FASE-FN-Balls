@@ -1,0 +1,16 @@
+000000	black
+000000	black
+0000d7	blue
+0000ff	bright blue
+d70000	red
+ff0000	bright red
+d700d7	magenta
+ff00ff	bright magenta
+00d700	green
+00ff00	bright green
+00d7d7	cyan
+00ffff	bright cyan
+d7d700	yellow
+ffff00	bright yellow
+d7d7d7	white
+ffffff bright white
