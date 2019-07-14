@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="1">
+    <builddir>bubble-cppcheck-build-dir</builddir>
+    <platform>Unspecified</platform>
+    <analyze-all-vs-configs>true</analyze-all-vs-configs>
+    <exclude>
+        <path name="bin/"/>
+        <path name="build/"/>
+        <path name="asm/"/>
+    </exclude>
+    <tools>
+        <tool>clang-tidy</tool>
+    </tools>
+</project>

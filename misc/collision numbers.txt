@@ -1,0 +1,367 @@
+/*
+y top 0 to bottom 159  REPRESENTS center of player
+x left 0 to right 240  REPRESENTS center of player
+
+
+default position CENTER
+xx3 = 200
+yy3 = 55
+
+playerXpos = 200
+playerYpos = 55
+
+xx1 = tile number 0 to 14
+yy1 = tile number 0 to 14
+default
+xx1 = 12
+yy1 = 3
+xx2 = 12
+yy2 = 3
+
+xx4 = 12
+yy4 = 3
+*/
+
+/*First things first, you may already know how to check circle-point collision - it's simply checking that the distance between the circle' center and the point is smaller than the circle' radius:*/
+DeltaX = CircleX - PointX;
+DeltaY = CircleY - PointY;
+return (DeltaX * DeltaX + DeltaY * DeltaY) < (CircleRadius * CircleRadius);
+
+/*Surprisingly or not, rectangle-circle collisions are not all too different - first you find the point of rectangle that is the closest to the circle' center, and check that point is in the circle.
+
+And, if the rectangle is not rotated, finding a point closest to the circle' center is simply a matter of clamping the circle' center coordinates to rectangle coordinates:
+*/
+NearestX = Max(RectX, Min(CircleX, RectX + RectWidth));
+NearestY = Max(RectY, Min(CircleY, RectY + RectHeight));
+//So, combining the above two snippets yields you a 3-line function for circle-rectangle check:
+
+DeltaX = CircleX - Max(RectX, Min(CircleX, RectX + RectWidth));
+DeltaY = CircleY - Max(RectY, Min(CircleY, RectY + RectHeight));
+return (DeltaX * DeltaX + DeltaY * DeltaY) < (CircleRadius * CircleRadius);
+
+void circleToSquare()
+{
+	//shorts or larger
+	unsigned short DeltaX, DeltaY;
+	unsigned short CircleX, CircleY;//
+	unsigned short RectWidth, RectHeight;//
+	unsigned short RectX, RectY;//RectX, RectY//PointX, PointY	
+	unsigned short CircleRadius;//
+	//unsigned short NearestX, NearestY;
+	unsigned short temp1, temp2;
+	
+	RectWidth = 16;
+	RectHeight = 16;
+	RectX = 120;
+	RectY = 72;
+	CircleRadius = 14;
+	
+	CircleX = sprites[0].x;
+	CircleY = sprites[0].y;
+	
+	DeltaX = CircleX - max(RectX, min(CircleX, RectX - RectWidth));
+	DeltaY = CircleY - max(RectY, min(CircleY, RectY - RectHeight));
+
+	temp1 = DeltaX * DeltaX + DeltaY * DeltaY;
+	temp2 = CircleRadius * CircleRadius;
+	
+	//x 107 circle moving right
+	//y 133 circle moving left
+	
+	if (temp1 < temp2)
+	{
+		M_OUTP(0xfe, 7);//tile 27 has target in it
+	}
+}
+
+
+void enemyCollision()
+{
+	xx1 = enemyX + 10;
+	xx2 = enemyX - 10;
+	yy1 = enemyY + 10;
+	yy2 = enemyY - 10;
+	
+	if ((playerXpos < xx1) && (playerXpos > xx2) && (playerYpos < yy1) && (playerYpos > yy2))
+	{
+		playerDeath();
+	}
+}
+
+//original tile collision 8-5-2018
+void tileCollision()
+{
+	tileType = 0;	
+	//players sprite
+	xx1 = (sprites[0].x - 6) >> 4;
+	xx2 = (sprites[0].x + 5) >> 4;
+	yy1 = (sprites[0].y - 6) >> 4;
+	yy2 = (sprites[0].y + 5) >> 4;
+
+	xx3 = sprites[0].x;
+	yy3 = sprites[0].y;
+	
+	xx4 = sprites[0].x >> 4;
+	yy4 = sprites[0].y >> 4;	
+	//tileType = tiles[xx4 + scrw * yy4];
+	
+	//https://yal.cc/rectangle-circle-intersection-test/
+		
+	if (tiles[xx1 + scrw * yy1] > 0)
+	{
+		//M_OUTP(0xfe, 3);
+		tileType = tiles[xx1 + scrw * yy1];
+	}
+	if (tiles[xx2 + scrw * yy1] > 0)
+	{
+		//M_OUTP(0xfe, 3);
+		tileType = tiles[xx2 + scrw * yy1];
+	}
+	if (tiles[xx1 + scrw * yy2] > 0)
+	{
+		//M_OUTP(0xfe, 3);
+		tileType = tiles[xx1 + scrw * yy2];
+	}
+	if (tiles[xx2 + scrw * yy2] > 0)
+	{
+		//M_OUTP(0xfe, 3);
+		tileType = tiles[xx2 + scrw * yy2];
+	}
+	
+	//aspect from player
+	// top OK
+	//bottom OK
+	//right OK
+	//left OK
+	//diagionals NOT OK
+	
+	{
+		//tileType
+		//playerXpos
+		//playerYpos
+		PrintStr("   ", 0x0901);
+		strcpy (str,"");
+		itoa(playerYpos, yourScoreTXT, 10);
+		strcat (str,yourScoreTXT);
+		PrintStr(str, 0x0901);
+	}
+	{
+	//	strcpy (str,"");
+	//	itoa(yy4, yourScoreTXT, 10);
+	//	strcat (str,yourScoreTXT);
+	//	PrintStr(str, 0x0901);
+	}
+	
+	switch(tileType)
+	{
+		//do nothing
+		case 0://empty square
+		{
+			break;
+		}
+		case 1://bottom edge
+		{
+			break;
+		}
+		case 2://top edge
+		{
+			break;
+		}
+		case 3://left edge
+		{
+			break;
+		}
+		case 4://right edge
+		{
+			break;
+		}
+		case 5://left top corner
+		{
+			break;
+		}
+		case 6://right top corner
+		{
+			break;
+		}
+		case 7://left bottom corner
+		{
+			break;
+		}
+		case 8://right bottom corner
+			break;
+		
+		case 9://warp
+			warpLevel();
+			break;
+		
+		case 10://warp destination
+			//do nothing
+			break;
+		
+		case 11://in screen warp
+			warpScreen();
+			break;
+			
+		case 12://freeze enemies
+			freezeEnemies();
+			break;
+		
+		case 13://key
+		{
+			keyCollected = true;
+			collectKey();			
+			break;
+		}
+		
+		case 14://1UP
+			collect1up();
+			break;
+		
+		case 15://enemy launcher / deadly
+		{
+			playerDeath();
+			break;
+		}
+		case 16://red diamond obsticle
+		{
+			M_OUTP(0xfe, 6);
+			//playerDeath();
+			break;
+		}
+		case 17://yellow diamond obsticle
+		{
+			M_OUTP(0xfe, 6);
+			//playerDeath();
+			break;
+		}
+		case 18://yellow spikes obsticle
+		{
+			M_OUTP(0xfe, 6);
+			//playerDeath();
+			break;
+		}
+		case 19://red spikes obsticle
+		{
+			M_OUTP(0xfe, 6);
+			//playerDeath();
+			break;
+		}
+		case 20://gate obsticle
+		{
+			M_OUTP(0xfe, 6);
+			//playerDeath();
+			break;
+		}
+		case 21://gate obsticle
+		{
+			M_OUTP(0xfe, 6);
+			//playerDeath();
+			break;
+		}
+		case 22://gate obsticle
+		{
+			M_OUTP(0xfe, 6);
+			//playerDeath();
+			break;
+		}
+		
+		case 23://gate obsticle
+		{
+			M_OUTP(0xfe, 6);
+			//playerDeath();
+			break;
+		}
+		
+		case 24://gate obsticle
+		{
+			M_OUTP(0xfe, 6);
+			//playerDeath();
+			break;
+		}
+			
+	}
+	
+	
+	
+	
+	
+	
+	
+//	{
+//		strcpy (str,"");
+//		itoa(tileType, yourScoreTXT, 10);
+//		strcat (str,yourScoreTXT);
+//		PrintStr(str, 0x0901);	
+//	}
+	
+
+	
+/*	{
+		//actual pixel positions
+		strcpy (str,"");
+		itoa(yy3, yourScoreTXT, 10);
+		strcat (str,yourScoreTXT);
+		strcat (str,":");
+		itoa(xx3, yourScoreTXT, 10);
+		strcat (str,yourScoreTXT);
+		strcat (str,":");
+		
+		//PrintStr(str, 0x1001);
+		PrintStr(str, 0x0901);
+		
+		//closest to player
+		//tile x=11, y=2
+		//center of tile x11,y2 is
+		//184x, 40y
+		
+		
+		//40 >> 4 = 2
+		//184 >> 4 = 11
+	}*/
+	
+	//M_OUTP(0xfe, 1);
+	
+	
+	
+
+	/*
+	//collision with tiles
+	if (tiles[xx1 + scrw * yy1] > 14)
+	{
+		//check left of sprite
+		playerDeath();
+	}
+	if (tiles[xx1 + scrw * yy2] > 14)
+	{
+		//check bottom of sprite
+		playerDeath();
+	}
+	if (tiles[xx2 + scrw * yy1] > 14)
+	{
+		//check right
+		playerDeath();
+	}
+	if (tiles[xx2 + scrw * yy2] > 14)
+	{
+		//check top of sprite
+		playerDeath();
+	}
+	
+	//collision with screen edges
+    if (sprites[0].x < 7)
+    {
+        playerDeath();
+    }
+    if (sprites[0].x > 233)
+    {
+        playerDeath();
+    }
+    if (sprites[0].y < 7)
+    {
+       playerDeath();
+    }
+    if (sprites[0].y > 153)
+    {
+        playerDeath();
+    }*/
+}

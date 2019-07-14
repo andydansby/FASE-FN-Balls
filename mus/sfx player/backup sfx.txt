@@ -1,0 +1,95 @@
+extern void __FASTCALL__ SFX(unsigned char sfxData)
+{
+#asm
+;org 32778
+
+ld hl,sfx_data		; address of sound effects data
+
+main:
+	xor a			; 6
+	ld a, (hl)		; 7
+	or 0			; 8
+	jr nz, next 	; 9
+	ret				; 10
+
+next:				; 11
+	ld bc, 1		; 12
+
+pushSpeaker:		; 13
+	push bc			; 14
+	ld b,0			; 15
+	ld c, (hl)		; 16
+	push bc			; 17
+	ld a, 0x10		; 18
+	;and 0xf8		; 19 ; mask out unwanted bits
+	out (0xfe),a	; 20
+	nop				; 21
+	nop				; 22
+	nop				; 23
+	nop				; 24
+	nop 			; 25
+	nop 			; 26
+	nop				; 27
+	
+temp1:
+	dec bc			; 29
+	ld a,c			; 30
+	or b			; 31
+	jp nz, temp1	; 32805
+	ld bc, 8		; 33
+
+play:
+	dec bc			; 34
+	ld a, c			; 35
+	or b			; 36
+	jp nz, play		; 37
+	ld a, 0x7		; 38
+	and 0xf8		; 39
+	out (0xfe),a	; push speaker
+	pop bc			; 41
+	nop				; 42
+	nop				; 43
+	nop				; 44
+	nop				; 45
+	nop				; 46
+	nop				; 47
+	nop				; 48
+
+readdata:
+	dec bc
+	ld a, c
+	or b
+	jp nz, readdata
+	pop bc
+	dec bc
+	ld a, c
+	or b
+	jp nz, pushSpeaker
+	inc hl
+	jp main
+
+sfx_data:
+SoundEffectsData:
+	defw SoundEffect0Data
+	defw SoundEffect1Data
+	defw SoundEffect2Data
+	
+SoundEffect0Data:
+	defw 1,128,3,134,5,140,7,146,9,151,11,155,13,156,15,159,15,159,17,160,19,159,21,157,23,154,25,150,27,145,29,140,31,134,33,127,35,121,37,115,39,109,41,105,43,101,45,98,47,96,49,96,51
+	defb 0
+SoundEffect1Data:
+	defw 1,55,64,216,138,75,255,128,254,77
+	defb 0
+SoundEffect2Data:
+	defw 1,160,200,26,238,35,96,128,254,77
+	defb 0
+
+#endasm
+}
+
+//SoundEffect0Data:
+//	defw 50,200,25,65486,5375
+//	defb 0
+//SoundEffect1Data:
+//	defw 12,96,400,65526,2688
+//	defb 0

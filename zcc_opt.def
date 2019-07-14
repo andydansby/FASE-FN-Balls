@@ -1,0 +1,18 @@
+
+IF !DEFINED_STACKPTR 
+	defc	DEFINED_STACKPTR  = 1
+	defc STACKPTR  = 56000
+ENDIF
+
+
+IF !DEFINED_ANSIstdio
+	defc	DEFINED_ANSIstdio = 1
+ENDIF
+
+	DEFINE DEFINED_myzorg
+	defc myzorg = 32772
+
+IF !NEED_floatpack
+	DEFINE	NEED_floatpack
+ENDIF
+

@@ -1,0 +1,144 @@
+analysis of beepfx first effect
+32763
+on start
+	af = 68
+	bc = 0
+	de = 18
+	hl = 0
+	ix = 980
+
+ld a, L
+
+loads into register a, L of HL, via z88dk calling convention for unsigned char
+
+	af = 68
+	bc = 0
+	de = 18
+	hl = 0
+	ix = 980
+
+
+ld hl, sfxData (32792)
+
+	??ld hl 80cd??
+	af = 68
+	bc = 0
+	de = 18
+	hl = 32972 <---change
+	ix = 980
+
+	bytes of 32972 = 222 128
+	
+	THE DIFFERENCE BETWEEN HL (32972) and DATA START (32990) is 18, same as DE (18) just coindence???
+
+push ix
+;place ix on stack
+	af = 68
+	bc = 0
+	de = 18
+	hl = 32972
+	ix = 980
+
+push iy
+;place iy on stack
+	af = 68
+	bc = 0
+	de = 18
+	hl = 32972
+	ix = 980
+
+ld b,0
+	af = 68
+	bc = 0
+	de = 18
+	hl = 32972
+	ix = 980
+
+ld c,a
+	af = 68
+	bc = 0
+	de = 18
+	hl = 32972
+	ix = 980
+
+add hl,bc
+	af = 68
+	bc = 0
+	de = 18
+	hl = 32972
+	ix = 980
+
+add hl,bc
+	af = 68
+	bc = 0
+	de = 18
+	hl = 32972
+	ix = 980
+
+
+ld e,(hl)
+	af = 68
+	bc = 0
+	de = 222 <---change
+	hl = 32972
+	ix = 980
+
+inc hl
+	af = 68
+	bc = 0
+	de = 222
+	hl = 32973 <---change
+	ix = 980
+
+ld d,(hl)  loads into register d, value found in address HL
+	af = 68
+	bc = 0
+	de = 32990 <---change
+	hl = 32973
+	ix = 980
+THIS IS WHERE DATA IS 32990
+
+push de
+	af = 68
+	bc = 0
+	de = 32990
+	hl = 32973
+	ix = 980
+
+pop ix
+	af = 68
+	bc = 0
+	de = 32990
+	hl = 32973
+	ix = 32990 <---change
+now data is in IX
+
+rra
+	af = 68
+	bc = 0
+	de = 32990
+	hl = 32973
+	ix = 32990
+
+
+rra
+	af = 68
+	bc = 0
+	de = 32990
+	hl = 32973
+	ix = 32990
+
+
+rra
+	af = 68
+	bc = 0
+	de = 32990
+	hl = 32973
+	ix = 32990
+
+and 7
+	af = 84 <---change
+	bc = 0
+	de = 32990
+	hl = 32973
+	ix = 32990

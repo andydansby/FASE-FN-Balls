@@ -1,0 +1,160 @@
+analysis of beepfx second effect
+32763
+
+on start
+	af = 68
+	bc = 0
+	de = 24576
+	hl = 1
+	ix = 980
+
+ld a, L
+	af = 324   <---change
+	bc = 0
+	de = 24576
+	hl = 1
+	ix = 980
+
+//data @ 33002
+ld hl, sfxData (32792)
+	af = 324
+	bc = 0
+	de = 24576
+	hl = 32972 <---change
+	ix = 980
+	
+	bytes of 32972 = 222 128
+
+	THE DIFFERENCE BETWEEN HL (32972) and DATA START (33002) is 30
+
+push ix
+;place ix on stack
+	af = 324
+	bc = 0
+	de = 24576
+	hl = 32972
+	ix = 980
+
+push iy
+;place iy on stack
+	af = 324
+	bc = 0
+	de = 24576
+	hl = 32972
+	ix = 980
+
+ld b,0
+	af = 324
+	bc = 0
+	de = 24576
+	hl = 32972
+	ix = 980
+
+ld c,a
+	af = 324
+	bc = 1      <---change
+	de = 24576
+	hl = 32972
+	ix = 980
+
+add hl,bc
+	af = 324
+	bc = 1
+	de = 24576
+	hl = 32973
+	ix = 980
+
+add hl,bc
+	af = 324
+	bc = 1
+	de = 24576
+	hl = 32974 <---change
+	ix = 980
+
+//data @ 33002
+ld e,(hl)
+	af = 324
+	bc = 1
+	de = 24810 <---change
+	hl = 32974 <---change
+	ix = 980
+
+inc hl
+	af = 324
+	bc = 1
+	de = 24810
+	hl = 32975 <---change
+	ix = 980
+
+magic happens here!!!!
+ld d,(hl)
+	af = 324
+	bc = 1
+	de = 33002 <---change
+	hl = 32975
+	ix = 980
+
+push de
+	af = 324
+	bc = 1
+	de = 33002
+	hl = 32975
+	ix = 980
+
+pop ix
+	af = 324
+	bc = 1
+	de = 33002
+	hl = 32975
+	ix = 33002
+
+
+rra
+	af = 69    <---change
+	bc = 1     <---change
+	de = 33002
+	hl = 32975
+	ix = 33002
+
+
+rra
+	af = 32836
+	bc = 1
+	de = 33002
+	hl = 32975
+	ix = 33002
+
+
+rra
+	af = 16452
+	bc = 1
+	de = 33002
+	hl = 32975
+	ix = 33002
+
+and 7
+	af = 84
+	bc = 1
+	de = 33002
+	hl = 32975
+	ix = 33002
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

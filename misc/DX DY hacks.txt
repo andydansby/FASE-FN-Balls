@@ -1,0 +1,45 @@
+effects in collisions
+
+short x, vx, ax;
+short y, vy, ay;
+
+
+bounces off sightly, but can push through object
+ax = -ax;
+ay = -ay;
+
+or better yet (pushes through using current speed and keeps pushing
+vx -= ax;
+vy -= ay;
+
+
+bounce
+vx = -vx;
+vy = -vy;
+or 
+vx = vx * -1;
+vy = vy * -1;
+or
+vx = -vx + ax;
+vy = -vy + ay;
+
+curves
+vx = vx - 50;
+vy = vy - 50;
+
+slows down
+vx = vx >> 1;
+vy = vy >> 1;
+better yet (not such a huge slowdown)
+vx += (ax + ax);
+vy += (ay + ay);
+
+
+
+bad
+vx = x;
+vy = y;
+
+stops completely and will not move again
+vx = -ax;
+vy = -ay;

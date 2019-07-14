@@ -1,0 +1,662 @@
+
+UUIRSMMM
+00001000; shadow, page 0;; frezes game
+00001101; shadow page 5;;freezes game
+00000101; page 5 only;;resets game
+00000000; page 0;;resets game
+
+
+MMM= ram bank at C000 (0-7)   
+S=Screen page bit    
+R=Rom Low bit    
+I=I/O Disabling 
+UU = unused bits on Sinclair/Amstrad models
+
+111 = 7
+UUIRSMMM
+00001000
+
+UUIRSMMM
+0000 0101	= 5		;shadow on bank 5 			resets computer
+0000 1101	= 13	;shadow off bank 5			freezes computer
+0001 0101	= 21	;rom 1, shadow off bank 5	color blocks at bottom
+0001 1101	= 29	;rom 1, shadow on bank 5	border turns red game freezes
+inverse
+01010000 = 80	= freezes
+11010000 = 208	= reset computer
+01010001 = 81	= freezes
+11010001 = 209	= colorful crash
+
+UUIRSMMM
+0000 0111	= 7		;shadow on bank 7			goes into load or save routine
+0000 1111	= 15	;shadow off bank 7			color bars all across
+0001 0111	= 23	;rom 1, shadow off bank 7 	color blocks at bottom
+0001 1111	= 31	;rom 1, shadow on bank 7	screen turns black and game works after (closest to working)
+inverse
+01110000 = 112
+11110000 = 240		;reset computer
+01110001 = 113		;freezes speccy
+11110001 = 241		;reset computer
+
+01010
+
+8 and 
+
+MMM= ram bank at C000 (0-7)   
+S=Screen page bit    
+R=Rom Low bit    
+I=I/O Disabling 
+UU = unused bits on Sinclair/Amstrad models
+UUIRSMMM
+0001----	system variable AND 240
+00010000	OR 0
+00011000	OR 8
+
+
+brute force 3
+	UUIR SMMM
+	7654 3210
+0 = 0000 0000
+1 = 0000 0001
+2 = 0000 0010
+3 = 0000 0011
+4 = 0000 0100
+5 = 0000 0101
+6 = 0000 0110
+7 = 0000 0111
+8 = 0000 1000
+9 = 0000 1001
+10= 0000 1010
+11= 0000 1011
+12= 0000 1100
+13= 0000 1101
+14= 0000 1110
+15= 0000 1111
+16= 0001 0000	***
+17= 0001 0001
+18= 0001 0010
+19= 0001 0011
+20= 0001 0100
+21= 0001 0101
+22= 0001 0110
+23= 0001 0111
+24= 0001 1000	***
+25= 0001 1001
+26= 0001 1010
+27= 0001 1011
+28= 0001 1100
+29= 0001 1101
+30= 0001 1110
+31= 0001 1111
+
+23388 0 = blank
+
+
+AND 8
+makes bit 4 = 1
+so
+1111 1111 AND 0000 1000 =  0000 1000
+
+
+
+240 = 1111 0000
+
+248 = 1111 1000
+
+or 5 = 1111 1101
+
+or 8 should turn on shadow
+
+	;previous value of port stored in system variable 23388
+	
+	ld a,(23388)	;fetch current value
+	
+	;and 248	;clear bits 0–2 (bank #) 11111000
+	and 240	;clear bits 0–3 (bank #)
+	or 5		;select new bank
+	ld bc,32765	;our port
+	di
+	ld (23388),a	;write new value back to sys. var
+	out (c), a		;perform Bankswitch operation port 32765
+	ei
+	
+	
+
+
+brute force 2
+0		fast page flipping (flicky but working)
+1		reset speccy
+2		reset speccy
+3		reset speccy
+4		reset speccy
+5		reset speccy
+6		reset speccy
+7		reset speccy
+8		fast page flipping (flicky but working)
+9		black play area and freeze
+10		reset speccy
+11		reset speccy
+12		reset speccy
+13		in game freeze
+14		reset speccy
+15		reset speccy
+
+
+
+
+16		
+17		reset speccy
+18		save routine
+19		IN GAME freeze
+20		color blocks freeze
+21		color blocks freeze
+22		color blocks freeze
+23		color blocks freeze 00010111
+24		blank screen freeze **
+25		save routine
+26		IN GAME freeze
+27		IN GAME freeze		00010111
+28		save routine with audio
+29		save routine
+30*		KINDA working	0001 1110 (RAM 6)
+31*		KINDA working	0001 1111 (RAM 7)
+						UUIR SMMM
+32		save routine with audio
+33		reset speccy
+34		KINDA working black screen or  garbed text
+35		KINDA working in game screen or black screen
+
+36		IN GAME freeze
+37		color blocks crash
+38		color blocks crash
+39		color blocks crash
+40		amazing crash
+41		IN GAME crash
+42		reset to new
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113		freezes speccy
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240		reset speccy
+241		reset speccy
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+
+
+
+
+
+
+
+
+
+
+
+
+
+brute force
+0		reset speccy
+1		amazing crash
+2		freezes speccy
+3		color blocks freeze
+4		color blocks freeze
+5		amazing crash
+6		amazing crash
+7		speccy freezes	0000 0111
+8		IN GAME freeze
+9		save routine
+10		IN GAME freeze
+11		IN GAME freeze
+12		color blocks freeze
+13		IN GAME freeze
+14		KINDA working	either a in game screen or blank screen
+15		amazing crash
+16		amazing crash
+17		reset speccy
+18		save routine
+19		IN GAME freeze
+20		color blocks freeze
+21		color blocks freeze
+22		color blocks freeze
+23		color blocks freeze 00010111
+24		blank screen freeze **
+25		save routine
+26		IN GAME freeze
+27		IN GAME freeze		00010111
+28		save routine with audio
+29		save routine
+30*		KINDA working	0001 1110 (RAM 6)
+31*		KINDA working	0001 1111 (RAM 7)
+						UUIR SMMM
+32		save routine with audio
+33		reset speccy
+34		KINDA working black screen or  garbed text
+35		KINDA working in game screen or black screen
+
+36		IN GAME freeze
+37		color blocks crash
+38		color blocks crash
+39		color blocks crash
+40		amazing crash
+41		IN GAME crash
+42		reset to new
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113		freezes speccy
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240		reset speccy
+241		reset speccy
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256

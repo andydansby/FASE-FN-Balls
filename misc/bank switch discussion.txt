@@ -1,0 +1,46 @@
+ok, you have bad day 
+
+(and i have bad english no one is perfect)
+
+you are talking about two things
+1) which screen is displayed
+2) which memory bank is mapped on 49152 (C000h)
+
+1) which screen is displayed depends on bit 3
+0=bank 5 is displayed
+1=bank 7 is displayed
+
+2) which memory bank [0-7] is mapped on 49152 depends on bits 0-2
+so you have 8 of 16K banks (8*16=128)
+two of these banks are harwired to be pernamently sitting on 16384 (bank 5) and 32768 (bank 2)
+so if you set bank 5 to be on 49152 then
+PEEK (16384+i) == PEEK (49152)
+gives true for every I from 0 to 16385, by other words, bank 5 is present two times in memory
+
+so back to your problem. there are two solutions, the stupid one:
+set bits 0-2 to value 7  ;bank 7 = shadow screen is on 49152
+set bit 3 to 0           ;normal screen is visible
+write something to 49152 ;writting to shadow  screen
+set bit 3 to 1           ;switch to shadow screen, your sprite is now visible
+....
+write something to 16384 ;to normal screen which is now invisible
+set bit 3 to 0           ;normal screen is now visibe
+in this way you have just two videorams (at 16384 and 49152) and you select the visible one by switching bit 3, in this case you have to use two different routines, one writes to screen on 16384, second to screen on 49152
+
+BUT... it is very stupid way and probably no one uses this
+
+the better way is:
+make your gfx routines to work with adress 49152
+set bank 5 visible 
+set bank 7 to be accessible via page on 49152
+draw something on 49152
+wait for interrupt
+set bank 7 to be visible 
+set bank 5 to be accessible via 49152
+draw something ....
+
+some notes:
+-you switch banks which everyone holds adresses from 49152 to 65535 so it is not good idea to have your sprite routine above 49152 except you have the same routine at same place in both banks
+-wait for interrupt when switching normal/shadow screen, the effect takes place immediatelly so it can happens that first half of normal screen is displayed and then second half is of shadow screen is displayed
+
+(huh, time to go to work)

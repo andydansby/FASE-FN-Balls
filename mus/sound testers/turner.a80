@@ -1,0 +1,215 @@
+; when you compile your program with 
+; any assembler
+; you must include file "sound.a80"
+; here is a beginning you must use
+
+	;call sound
+	
+;on interrupts or in main game cicle
+
+	;	sound:
+	;	ld a,(sonreq) ;any new sound?
+	;	and a
+	;	jr z,nonew  ;no
+	;yes
+	;	ld (sonnow),a
+	;	dec a
+	;	jr z,noise	;#01 noise
+
+;when you need sfx you can use
+
+	;	ld a, sfx_num
+	;	ld (sonreq),a
+
+
+;Steve Turner / Hewson Cons 
+;sfx engine
+;used in Ranarama, Quazatron,IronMan 
+;можно вешать на прерывани€ или вызывать в основном цикле
+;you can use this routine on interrupts (as autor)
+;or in main game cicle
+
+sound 	
+	ld a,(sonreq) ;новый звук играем?
+	and a
+	jr z,nonew  ;нет	
+;да
+	ld (sonnow),a
+	dec a
+	jr z,noise	;#01 шум
+
+	ld hl,sfx_data
+	dec a
+	add a,a
+	add a,a
+	add a,a
+	ld e,a
+	xor a
+	ld (sonreq),a
+	ld d,a
+	add hl,de
+	ld bc,08
+	ld de,sonfrq
+	ldir
+	jr process
+
+nonew 	ld a,(sonnow) ;а старый звук есть?
+	and a
+	ret z
+	
+	dec a	;продолжать шум?
+	jr nz,process ;продолжать звук
+
+	jr cnois
+
+noise 	ld a,0ah
+	ld (sonlen),a
+	xor a
+	ld (sonreq),a
+
+cnois 	ld b,30h
+
+gain	call random
+	and 10h
+	out (0feh),a
+	ld c,02h
+
+make	dec c
+	jr nz,make
+	djnz gain
+	ld hl,sonlen
+	dec (hl)
+	ret nz
+	xor a
+	ld (sonnow),a
+	ret
+
+process	ld a,(sonfrq)
+	ld h,a
+	ld a,10h
+	ld d,0ffh
+
+sonlp 	ld e,h
+	out (0feh),a
+	xor 10h
+
+freq	dec d
+	jr z,mod
+	dec e
+	jr nz,freq
+	jr sonlp
+
+mod	ld a,(soncfg)
+	add a,h
+	ld (sonfrq),a
+	ld hl,sonmod
+	dec (hl)
+	ret nz
+	ld hl,sonlen
+	dec (hl)
+	jr nz,modify
+	xor a
+	ld (sonnow),a
+	ld a,(sonnex)
+	and a
+	ret z
+	ld (sonreq),a
+	ret
+
+modify	ld a,(sobrsf)
+	ld c,a
+	ld a,(sontyp)
+	and a
+	jr z,reset
+	dec a
+	jr z,typ1
+	dec a
+	jr z,typ2
+
+typoth	ld a,(soncfg)
+	neg
+	ld (soncfg),a
+	jr mode
+
+typ2	inc c
+	inc c
+	ld a,c
+	ld (sobrsf),a
+	jr reset
+
+typ1	dec c
+	dec c
+	ld a,c
+	ld (sobrsf),a
+	jr reset
+
+reset 	ld a,c
+	ld (sonfrq),a
+
+mode	ld a,(sonrnd)
+	ld (sonmod),a
+	ret
+
+random	push hl
+	ld hl,(rnseed)
+	inc hl
+	ld a,h
+	and 03
+	ld h,a
+rok	ld (rnseed),a
+	ld a,r
+	xor (hl)
+	pop hl
+	ret
+
+rnseed	defw 1000h
+
+sonfrq	defb 00	;начальна€ частота
+		;start frequency
+soncfg	defb 00	;скорость изменени€ частоты
+		;frequency change
+sonmod	defb 00	;количество модул€ций в звуке
+		;change times
+sonlen	defb 00	;количество повторений звука
+		;repeat times
+sontyp	defb 00	;вид модул€ции
+		;modulate type
+			;0 sawtooth
+			;1 2nd mod down
+			;2 2nd mod up
+			;3+ triangle
+sobrsf	defb 00	;частота сброса
+		;reset frequency
+sonrnd	defb 00	;темп изменени€ частоты сброса
+		;change reset temp
+sonnex	defb 00	;приклеенный эффект
+		;linked sfx
+sonnow	defb 00	;что играем
+		;
+sonreq	defb 00	;мен€ем эффект
+		;
+
+
+sfx_data	
+;here all souned excepts number 1 reserved for random noise 	
+;	defb	   0,   5,   5,   1,   0,   0,   0,   0
+;	defb	 28h,   5, 0Ah,   1,   0,   0,   0,   0
+;	defb	   0, 80h, 1Eh,   1,   0,   0,   0,   0
+;	defb    	   0,   2, 1Eh,   1,   0,   0,   0,   0
+;	defb    	   0, 7Dh, 20h,   1,   0,   0,   0,   0
+;	defb 	0FFh, 83h, 20h,   1,   0,   0,   0,   0
+;	defb 	0FFh, 83h, 28h, 20h,   1, 3Ch,   1,   0
+;	defb 	0F0h,0F0h,   8,   3,   0, 3Ch,   6,   0
+;	defb    	   2, 80h, 0Ah,   1,   0,   0,   0,   0
+;	defb  	 28h,0FAh,   8,   1,   0,   0,   0,   0
+;	defb 	0FAh, 2Ch,   6, 0Ah,   1, 5Ah,   1,   0
+;	defb    	   0,0FCh, 14h,   8,   1, 50h,   8,   0
+;	defb 	0E6h,0E6h,   4,   1,   1,   0,   0,   0
+;	defb  	 2Dh, 43h, 14h,   1,   1,   0,   0,   0
+;	defb	   0,   0,   0,   0,   0,   0,   0,   0
+;	defb	   0,   0,   0,   0,   0,   0,   0,   0
+;	defb	   0,   0,   0,   0,   0,   0,   0,   0
+;	defb	   0,   0,   0,   0,   0,   0,   0,   0
+;	defb	   0,   0,   0,   0,   0,   0,   0,   0
+;	defb	   0,   0,   0,   0,   0,   0,   0,   0
+	

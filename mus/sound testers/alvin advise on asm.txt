@@ -1,0 +1,16 @@
+The c compiler can do any of three function call linkages (briefly described at https://www.z88dk.org/wiki/doku.php?id=libnew:target_embedded#mixing_c_and_assembly_language ).
+
+  Function call linkage is the method used to pass parameters and receive a return value.
+  
+Standard c linkage has the compiler push the parameters on the stack, call the function, then restore the stack by popping the parameters off.  This one you want to avoid because it requires the most work by the cpu.  However calls through function pointers must use this method.
+
+Fastcall linkage allows one parameter to be passed by register in a subset of DEHL.  So if the parameter is 8-bit, the value will be in L.  If the parameter is 16-bit, the value is in HL and if it is 32-bit the value is in DEHL.  This is the one you want for beepfx.
+
+Callee is for two parameters or more.  This one has the compiler push the params on the stack, call the function but this time the function is responsible for clearing the stack.  This is better than standard linkage because clearing the stack can normally be done by popping the parameters into the registers needed by the asm implementation.
+
+So for beepfx using fastcall linkage (and I am assuming you are using the old z88dk version) you would declare the function like this in the header file:
+
+extern void __FASTCALL__ beepfx(unsigned char song);
+
+Then your asm code will be getting "song" in the L register.
+fb is modifying that fastcall decorator.  It's  _ _ FASTCALL _ _ ie two underscores on either side
