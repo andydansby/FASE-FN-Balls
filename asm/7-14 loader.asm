@@ -111,7 +111,6 @@ mitad   jr      z, next         ; si no, salto a next
         ex      de, hl
         ld      bc, $80         ; en realidad menos, no necesito filtro rcs
         ldir                    ; recopio descompresor en página 1
-      IF player>0
         ld      hl, $c000
         ld      de, player
         call    $07f4           ; cargo bloque wyzplayer comprimido
@@ -119,10 +118,6 @@ mitad   jr      z, next         ; si no, salto a next
         ld      hl, $c000+player-1
         ld      de, $c000+playrw+3
         call    desc            ; descomprimo
-      ELSE
-        ld      a, $c9
-        ld      ($c00d), a
-      ENDIF
         ld      de, do1+6
         ld      hl, $8000
         ld      c, salto-prnbuf
