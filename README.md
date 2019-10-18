@@ -10,3 +10,5 @@ compied game an be downloaded from http://andyspeccysite.simplesite.com/
 my game development blog for this game is at https://zxspectrumcoding.wordpress.com/
 
 enjoy
+
+you may contact me at andydansby at gmail dot com
